@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.client.products.dao.IProductDao">
+    <!--根据种类查找书籍信息-->
+    <select id="selectProductByCategory" resultType="Product">
+        select * from products
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+        limit #{pageModel.firstLimitParam},#{pageModel.pageSize}
+    </select>
+
+    <!--获取符合条件的书籍个数-用于分页显示-种类-->
+    <select id="selectProductCount" resultType="int">
+        select count(*) from products
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+    </select>
+
+    <!--根据书名查找书籍信息-->
+    <select id="selectProductByName" resultType="Product">
+        select * from products
+        <where>
+            <if test="name != null and name != '' and name !='请输入书名'">
+                name like '%' #{name} '%'
+            </if>
+        </where>
+        limit #{pageModel.firstLimitParam},#{pageModel.pageSize}
+    </select>
+
+    <!--获取符合条件的书籍个数-用于分页显示-书名-->
+    <select id="selectProductCountByName" resultType="int">
+        select count(*) from products
+        <where>
+            <if test="name != null and name != '' and name !='请输入书名'">
+                name like '%' #{name} '%'
+            </if>
+        </where>
+    </select>
+
+    <!--根据id查询书籍详细信息-->
+    <select id="selectProductById" resultType="Product">
+        select * from products where id = #{id}
+    </select>
+
+    <!--最新公告查询-->
+    <select id="selectNoticeRecent" resultType="Notice">
+        select * from notice order by n_time desc limit 0,1
+    </select>
+
+    <!--本周热卖，前3本-->
+    <select id="selectWeekHotProduct" resultType="Product">
+        select products.id,products.name,products.imgurl,products.price,sum(orderitem.buynum) totalnum
+        from products,orders,orderitem
+        where orders.paystate = 1
+        and orderitem.order_id = orders.id
+        and orderitem.product_id = products.id
+        and orders.ordertime > DATE_SUB(NOW(),INTERVAL 7 DAY)
+        group by products.id
+        order by totalnum desc
+        limit 0,3
+    </select>
+</mapper>

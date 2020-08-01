@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.client.order.dao.IOrderDao">
+    <!--创建订单信息-->
+    <insert id="createOrder">
+        insert into orders(id,money,receiverAddress,receiverName,receiverPhone,user_id)
+        values (#{id},#{money},#{receiverAddress},#{receiverName},#{receiverPhone},#{user.id})
+    </insert>
+
+    <!--生成订单项-->
+    <insert id="createOrderItem">
+        insert into orderitem (order_id, product_id, buynum)
+        values (#{order.id},#{product.id},#{buyNum})
+    </insert>
+
+    <!--修改商品库存-->
+    <update id="modifyPNum">
+        update products set pnum = pnum - #{buyNum} where id = #{product.id}
+    </update>
+
+    <!--修改订单状态为—已支付-->
+    <update id="updatePayState">
+        update orders set paystate = 1 where id = #{id}
+    </update>
+</mapper>

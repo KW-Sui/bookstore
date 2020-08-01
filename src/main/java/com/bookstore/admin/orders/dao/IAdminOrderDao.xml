@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.admin.orders.dao.IAdminOrderDao">
+    <!--查询公告列表-->
+    <select id="selectAllOrders" resultMap="orderMap">
+        select * from orders
+    </select>
+
+    <resultMap id="orderMap" type="Order">
+        <id column="id" property="id"/>
+        <association property="user"
+                     column="user_id"
+                     javaType="User"
+                     select="selectUserById"
+        />
+    </resultMap>
+
+    <select id="selectOrderByManyCondition" resultMap="orderMap">
+        select * from orders
+        <where>
+            <if test="id != null and id != ''">
+                id = #{id}
+            </if>
+            <if test="receiverName != null and receiverName != ''">
+                and receiverName like '%' #{receiverName} '%'
+            </if>
+        </where>
+    </select>
+
+    <select id="selectUserById" resultType="User">
+        select * from user where id = #{user_id}
+    </select>
+
+    <!--根据id查询订单-->
+    <select id="selectOrderById" resultMap="orderMap">
+        select * from orders where id = #{id}
+    </select>
+
+    <!--根据order的id查询订单项-->
+    <select id="selectOrderItemByOrderId" resultMap="orderItemMap">
+        select * from orderitem where order_id = #{id}
+    </select>
+
+    <resultMap id="orderItemMap" type="OrderItem">
+        <association property="product"
+                     column="product_id"
+                     javaType="Product"
+                     select="selectProductById"/>
+        <association property="order"
+                     column="order_id"
+                     javaType="Order"
+                     select="selectOrderById"/>
+    </resultMap>
+
+    <select id="selectProductById" resultType="Product">
+        select * from products where id = #{product_id}
+    </select>
+
+
+    <!--1.删除订单项-->
+    <delete id="deleteOrderItemByOrderId">
+        delete from orderitem where order_id = #{id}
+    </delete>
+
+    <!--2.删除订单-->
+    <delete id="deleteOrderById">
+        delete from orders where id = #{id}
+    </delete>
+</mapper>

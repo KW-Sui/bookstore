@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<%--<jsp:forward page="/admin/login/login.jsp"></jsp:forward>--%>
+<%--	<jsp:forward page="/admin/login/login.jsp"></jsp:forward>--%>
 	<jsp:forward page="/client/product/showIndex"></jsp:forward>
 </body>
 </html>
